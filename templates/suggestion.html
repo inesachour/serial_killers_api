@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Evidence - Serial Killers API</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #dcdcdc;
+            --accent-color: #8a0303;
+            --blood-red: #450a0a;
+            --paper: #1a1410;
+            --font-heading: 'Special Elite', cursive;
+            --font-body: 'Crimson Text', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: #000;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, .3) 3px, rgba(0, 0, 0, .3) 4px),
+                radial-gradient(circle at 20% 50%, #0a0a0a 0%, #000000 100%);
+            color: var(--text-color);
+            padding-top: 80px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text x="10" y="50" font-size="10" fill="rgba(138,3,3,0.03)" transform="rotate(-45 50 50)">CLASSIFIED</text></svg>');
+            pointer-events: none;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        /* Crime Scene Tape */
+        body::after {
+            content: '⚠ CRIME SCENE - DO NOT CROSS ⚠ CRIME SCENE - DO NOT CROSS ⚠ CRIME SCENE - DO NOT CROSS ⚠';
+            position: fixed;
+            top: 75px;
+            left: -10%;
+            width: 120%;
+            background: repeating-linear-gradient(45deg,
+                    #000,
+                    #000 10px,
+                    #ffcc00 10px,
+                    #ffcc00 20px);
+            color: #000;
+            font-family: var(--font-heading);
+            font-size: 0.7rem;
+            padding: 0.3rem 0;
+            transform: rotate(-1deg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(10, 5, 5, 0.98);
+            background-image:
+                linear-gradient(rgba(138, 3, 3, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138, 3, 3, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-bottom: 3px solid var(--accent-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(138, 3, 3, 0.3);
+        }
+
+        .navbar-brand {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(138, 3, 3, 0.5);
+            position: relative;
+        }
+
+        .navbar-brand::before {
+            content: '⚠';
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-link {
+            position: relative;
+            color: #999;
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+        }
+
+        .nav-link::before {
+            content: '█';
+            margin-right: 0.5rem;
+            color: var(--accent-color);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nav-link:hover::before {
+            opacity: 1;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            border-color: var(--accent-color);
+            background-color: rgba(138, 3, 3, 0.1);
+            box-shadow: 0 0 15px rgba(138, 3, 3, 0.3);
+        }
+
+        /* Form Container */
+        .form-container {
+            width: 100%;
+            max-width: 650px;
+            margin: 2rem;
+            padding: 3rem;
+            background-color: rgba(26, 20, 16, 0.95);
+            background-image:
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" /></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.05"/></svg>');
+            border: 2px solid #2a2420;
+            box-shadow:
+                0 0 50px rgba(138, 3, 3, 0.3),
+                inset 0 0 100px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+            opacity: 0.4;
+            filter: blur(5px);
+        }
+
+        .form-container::after {
+            content: 'EVIDENCE FORM';
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #1a1410 0%, #0a0a0a 100%);
+            color: var(--accent-color);
+            font-family: var(--font-heading);
+            font-size: 0.7rem;
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--accent-color);
+            border-left: 4px solid var(--accent-color);
+            letter-spacing: 2px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-family: var(--font-heading);
+            color: var(--accent-color);
+            margin-top: 0;
+            font-size: 2.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--accent-color);
+            text-shadow: 2px 2px 0px #000, 0 0 10px rgba(138, 3, 3, 0.5);
+        }
+
+        .message {
+            background-color: rgba(0, 255, 0, 0.1);
+            border: 2px solid #0f0;
+            border-left: 4px solid #0f0;
+            color: #0f0;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .error {
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 2px solid #f00;
+            border-left: 4px solid #f00;
+            color: #f00;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-family: var(--font-heading);
+            color: #aaa;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        label::before {
+            content: '▸ ';
+            color: var(--accent-color);
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            background-color: rgba(10, 10, 10, 0.8);
+            border: 1px solid #333;
+            border-left: 3px solid var(--accent-color);
+            color: #fff;
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background-color: rgba(10, 10, 10, 0.95);
+            box-shadow: 0 0 15px rgba(138, 3, 3, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #5a0101 100%);
+            color: #fff;
+            border: 2px solid #000;
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #6a0101 0%, var(--accent-color) 100%);
+            box-shadow: 0 0 25px rgba(138, 3, 3, 0.6);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .navbar-nav {
+                gap: 1rem;
+            }
+
+            .form-container {
+                padding: 2rem 1.5rem;
+                margin: 2rem 1rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="/api/" class="navbar-brand">SK DATABASE</a>
+        <ul class="navbar-nav">
+            <li><a href="/api/docs/" class="nav-link">API Documentation</a></li>
+            <li><a href="/api/suggest/" class="nav-link">Suggest New Killer</a></li>
+            <li><a href="/api/suggest/?type=correction" class="nav-link">Suggest Correction</a></li>
+            <li><a href="/api/dashboard/" class="nav-link">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <div class="form-container">
+        {% if message %}
+        <div class="message">{{ message }}</div>
+        {% endif %}
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        {% if is_correction %}
+        <h2>Correct Evidence</h2>
+        <form method="POST" action="/api/suggest/">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="correction">
+
+            <div class="form-group">
+                <label for="killer_id">Select Subject</label>
+                <select id="killer_id" name="killer_id" required>
+                    <option value="" disabled selected>Select a subject...</option>
+                    {% for killer in killers %}
+                    <option value="{{ killer.id }}">{{ killer.common_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="suggestion_text">Correction Details</label>
+                <textarea id="suggestion_text" name="suggestion_text" rows="6" required
+                    placeholder="Specify the error and the correct information..."></textarea>
+            </div>
+
+            <button type="submit">Submit Correction</button>
+        </form>
+        {% else %}
+        <h2>Submit New Evidence</h2>
+        <form method="POST" action="/api/suggest/">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="new_killer">
+
+            <div class="form-group">
+                <label for="common_name">Common Name (Required)</label>
+                <input type="text" id="common_name" name="common_name" required
+                    placeholder="Enter common name (e.g. Ted Bundy)...">
+            </div>
+
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" placeholder="Enter full legal name...">
+            </div>
+
+            <div class="form-group">
+                <label for="aliases">Aliases</label>
+                <input type="text" id="aliases" name="aliases"
+                    placeholder="e.g. The Night Stalker, The Valley Intruder">
+            </div>
+
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth</label>
+                <input type="date" id="date_of_birth" name="date_of_birth">
+            </div>
+
+            <div class="form-group">
+                <label for="birth_country">Birth Country</label>
+                <input type="text" id="birth_country" name="birth_country" placeholder="e.g. USA">
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender">
+                    <option value="" disabled selected>Select gender...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="unknown">Unknown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="proven_victims">Proven Victims</label>
+                <input type="number" id="proven_victims" name="proven_victims" placeholder="e.g. 10">
+            </div>
+
+            <div class="form-group">
+                <label for="possible_victims">Possible Victims</label>
+                <input type="text" id="possible_victims" name="possible_victims" placeholder="e.g. 30+">
+            </div>
+
+            <div class="form-group">
+                <label for="years_active">Years Active</label>
+                <input type="text" id="years_active" name="years_active" placeholder="e.g. 1970-1980">
+            </div>
+
+            <div class="form-group">
+                <label for="active_countries">Active Countries</label>
+                <input type="text" id="active_countries" name="active_countries" placeholder="e.g. USA, Canada">
+            </div>
+
+            <div class="form-group">
+                <label for="modus_operandi">Modus Operandi</label>
+                <input type="text" id="modus_operandi" name="modus_operandi" placeholder="e.g. Strangulation">
+            </div>
+
+            <div class="form-group">
+                <label for="capture_date">Capture Date</label>
+                <input type="date" id="capture_date" name="capture_date">
+            </div>
+
+            <div class="form-group">
+                <label for="sentence">Sentence</label>
+                <input type="text" id="sentence" name="sentence" placeholder="e.g. Life imprisonment">
+            </div>
+
+            <div class="form-group">
+                <label for="death_date">Death Date</label>
+                <input type="date" id="death_date" name="death_date">
+            </div>
+
+            <div class="form-group">
+                <label for="manner_of_death">Manner of Death</label>
+                <input type="text" id="manner_of_death" name="manner_of_death"
+                    placeholder="e.g. Executed, Natural causes">
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" name="status">
+                    <option value="" disabled selected>Select status...</option>
+                    <option value="Imprisoned">Imprisoned</option>
+                    <option value="Deceased">Deceased</option>
+                    <option value="At Large">At Large</option>
+                    <option value="Released">Released</option>
+                    <option value="Unknown">Unknown</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Additional Notes</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Any other details..."></textarea>
+            </div>
+
+            <button type="submit">Submit Evidence</button>
+        </form>
+        {% endif %}
+    </div>
+</body>
+
+</html>

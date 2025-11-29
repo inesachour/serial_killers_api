@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | SK Database</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #dcdcdc;
+            --accent-color: #8a0303;
+            --blood-red: #450a0a;
+            --paper: #1a1410;
+            --font-heading: 'Special Elite', cursive;
+            --font-body: 'Crimson Text', serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: #000;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, .3) 3px, rgba(0, 0, 0, .3) 4px),
+                radial-gradient(circle at 20% 50%, #0a0a0a 0%, #000000 100%);
+            color: var(--text-color);
+            padding-top: 80px;
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(10, 5, 5, 0.98);
+            background-image:
+                linear-gradient(rgba(138, 3, 3, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138, 3, 3, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-bottom: 3px solid var(--accent-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 30px rgba(138, 3, 3, 0.3);
+        }
+
+        .navbar-brand {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(138, 3, 3, 0.5);
+            position: relative;
+        }
+
+        .navbar-brand::before {
+            content: '⚠';
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-link {
+            position: relative;
+            color: #999;
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            border-color: var(--accent-color);
+            background-color: rgba(138, 3, 3, 0.1);
+            box-shadow: 0 0 15px rgba(138, 3, 3, 0.3);
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            max-width: 1400px;
+            margin: 2rem auto 1rem;
+            padding: 0 2rem;
+        }
+
+        .dashboard-title {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 3px 3px 0px #000, 0 0 20px rgba(138, 3, 3, 0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-subtitle {
+            color: #888;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            max-width: 1400px;
+            margin: 0 auto 2rem;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: rgba(26, 20, 16, 0.95);
+            border: 1px solid #333;
+            border-left: 4px solid;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            opacity: 0.05;
+            font-size: 5rem;
+        }
+
+        .stat-card.total {
+            border-left-color: #33b5e5;
+        }
+
+        .stat-card.total::before {
+            content: '📊';
+        }
+
+        .stat-label {
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .stat-breakdown {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/api/" class="navbar-brand">SK DATABASE</a>
+        <ul class="navbar-nav">
+            <li><a href="/api/docs/" class="nav-link">API Documentation</a></li>
+            <li><a href="/api/suggest/" class="nav-link">Suggest New Killer</a></li>
+            <li><a href="/api/suggest/?type=correction" class="nav-link">Suggest Correction</a></li>
+            <li><a href="/api/dashboard/" class="nav-link"
+                    style="color: #fff; border-color: var(--accent-color);">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Admin Dashboard</h1>
+        <p class="dashboard-subtitle">Database statistics and submission tracking</p>
+    </div>
+
+    <!-- SECTION 1: SERIAL KILLERS STATISTICS -->
+    <div class="dashboard-header" style="margin-top: 3rem;">
+        <h2 class="dashboard-title" style="font-size: 2rem; margin-bottom: 1rem;">📊 Database Statistics</h2>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card total">
+            <div class="stat-label">Total Serial Killers</div>
+            <div class="stat-value">{{ killer_stats.total }}</div>
+            <div class="stat-breakdown">In database</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #bb86fc;">
+            <div class="stat-label">Proven Victims</div>
+            <div class="stat-value">{{ killer_stats.total_proven_victims }}</div>
+            <div class="stat-breakdown">Total confirmed</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #cf6679;">
+            <div class="stat-label">Possible Victims</div>
+            <div class="stat-value">{{ killer_stats.total_possible_victims }}</div>
+            <div class="stat-breakdown">Total suspected</div>
+        </div>
+
+        {% if killer_stats.most_active_decade %}
+        <div class="stat-card" style="border-left-color: #03dac6;">
+            <div class="stat-label">Most Active Decade</div>
+            <div class="stat-value">{{ killer_stats.most_active_decade.0 }}s</div>
+            <div class="stat-breakdown">{{ killer_stats.most_active_decade.1 }} killers active</div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Top Countries -->
+    {% if killer_stats.top_countries %}
+    <div class="stats-grid" style="margin-top: 1rem;">
+        <div class="stat-card" style="border-left-color: #ffd700; grid-column: span 2;">
+            <div class="stat-label">Top Countries</div>
+            <div style="margin-top: 1rem;">
+                {% for country, count in killer_stats.top_countries %}
+                <div
+                    style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #333;">
+                    <span style="color: #ddd;">{{ country }}</span>
+                    <span style="color: #ffd700; font-family: var(--font-heading); font-weight: bold;">{{ count
+                        }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #ff6b6b;">
+            <div class="stat-label">Gender Distribution</div>
+            <div style="margin-top: 1rem;">
+                {% for gender, count in killer_stats.gender_distribution.items %}
+                <div
+                    style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #333;">
+                    <span style="color: #ddd;">{{ gender }}</span>
+                    <span style="color: #ff6b6b; font-family: var(--font-heading);">{{ count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- SECTION 2: CORRECTIONS TRACKING -->
+    <div class="dashboard-header" style="margin-top: 3rem;">
+        <h2 class="dashboard-title" style="font-size: 2rem; margin-bottom: 1rem;">🔧 Corrections Tracking</h2>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card" style="border-left-color: #33b5e5;">
+            <div class="stat-label">New</div>
+            <div class="stat-value">{{ submission_stats.corrections_new }}</div>
+            <div class="stat-breakdown">Awaiting review</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #ffbb33;">
+            <div class="stat-label">In Progress</div>
+            <div class="stat-value">{{ submission_stats.corrections_progress }}</div>
+            <div class="stat-breakdown">Currently reviewing</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #00C851;">
+            <div class="stat-label">Done</div>
+            <div class="stat-value">{{ submission_stats.corrections_done }}</div>
+            <div class="stat-breakdown">Completed</div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: SUGGESTIONS TRACKING -->
+    <div class="dashboard-header" style="margin-top: 3rem;">
+        <h2 class="dashboard-title" style="font-size: 2rem; margin-bottom: 1rem;">💡 Suggestions Tracking</h2>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card" style="border-left-color: #33b5e5;">
+            <div class="stat-label">New</div>
+            <div class="stat-value">{{ submission_stats.suggestions_new }}</div>
+            <div class="stat-breakdown">Awaiting review</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #ffbb33;">
+            <div class="stat-label">In Progress</div>
+            <div class="stat-value">{{ submission_stats.suggestions_progress }}</div>
+            <div class="stat-breakdown">Currently reviewing</div>
+        </div>
+
+        <div class="stat-card" style="border-left-color: #00C851;">
+            <div class="stat-label">Done</div>
+            <div class="stat-value">{{ submission_stats.suggestions_done }}</div>
+            <div class="stat-breakdown">Completed</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
