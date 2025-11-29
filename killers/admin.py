@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 from .models import SerialKiller, Suggestion, Modification
 
 
@@ -10,6 +11,13 @@ class SerialKillerAdmin(admin.ModelAdmin):
     list_filter = ('gender', 'status', 'birth_country')
     search_fields = ('common_name', 'full_name', 'aliases')
     ordering = ('common_name',)
+    
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """Customize form fields to make certain TextFields single-line."""
+        if db_field.name in ['aliases', 'active_countries', 'modus_operandi', 'sentence']:
+            kwargs['widget'] = forms.TextInput(attrs={'size': '80', 'style': 'width: 100%;'})
+            return db_field.formfield(**kwargs)
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
     
     fieldsets = (
         ('Personal Information', {
@@ -51,6 +59,13 @@ class SuggestionAdmin(admin.ModelAdmin):
     search_fields = ('common_name', 'full_name', 'aliases')
     ordering = ('-created_at',)
     date_hierarchy = 'created_at'
+    
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """Customize form fields to make certain TextFields single-line."""
+        if db_field.name in ['aliases', 'active_countries', 'modus_operandi', 'sentence']:
+            kwargs['widget'] = forms.TextInput(attrs={'size': '80', 'style': 'width: 100%;'})
+            return db_field.formfield(**kwargs)
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
     
     fieldsets = (
         ('Submission Status', {

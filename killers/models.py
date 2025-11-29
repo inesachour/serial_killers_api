@@ -4,16 +4,30 @@ from django.db import models
 class SerialKiller(models.Model):
     """Model representing a serial killer in the database."""
     
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('unknown', 'Unknown'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('imprisoned', 'Imprisoned'),
+        ('deceased', 'Deceased'),
+        ('at_large', 'At Large'),
+        ('released', 'Released'),
+        ('unknown', 'Unknown'),
+    ]
+    
     # Personal Information
     common_name = models.CharField(max_length=255, db_index=True, help_text="Common name or nickname")
     full_name = models.CharField(max_length=255, blank=True, null=True, help_text="Full legal name")
     aliases = models.TextField(blank=True, null=True, help_text="Known aliases or other names")
     date_of_birth = models.DateField(blank=True, null=True)
     birth_country = models.CharField(max_length=255, blank=True, null=True)
-    gender = models.CharField(max_length=50, blank=True, null=True)
+    gender = models.CharField(max_length=50, choices=GENDER_CHOICES, blank=True, null=True)
     
     # Crime Details
-    proven_victims = models.CharField(max_length=50, blank=True, null=True, help_text="Number of proven victims (e.g., '17' or '100+')")
+    proven_victims = models.PositiveIntegerField(blank=True, null=True, help_text="Number of proven victims")
     possible_victims = models.CharField(max_length=50, blank=True, null=True, help_text="Possible victim count")
     years_active = models.CharField(max_length=100, blank=True, null=True, help_text="Years active (e.g., '1974-1978')")
     active_countries = models.TextField(blank=True, null=True, help_text="Countries where crimes occurred")
@@ -24,7 +38,7 @@ class SerialKiller(models.Model):
     sentence = models.TextField(blank=True, null=True)
     death_date = models.DateField(blank=True, null=True)
     manner_of_death = models.CharField(max_length=255, blank=True, null=True)
-    status = models.CharField(max_length=100, blank=True, null=True, help_text="Current status (e.g., Executed, Imprisoned)")
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, blank=True, null=True, help_text="Current status (e.g., Executed, Imprisoned)")
     
     # Additional Information
     notes = models.TextField(blank=True, null=True)
@@ -47,7 +61,21 @@ class SerialKiller(models.Model):
 class Suggestion(models.Model):
     """Model for user suggestions of new serial killers."""
     
-    STATUS_CHOICES = [
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('unknown', 'Unknown'),
+    ]
+    
+    KILLER_STATUS_CHOICES = [
+        ('imprisoned', 'Imprisoned'),
+        ('deceased', 'Deceased'),
+        ('at_large', 'At Large'),
+        ('released', 'Released'),
+        ('unknown', 'Unknown'),
+    ]
+    
+    SUBMISSION_STATUS_CHOICES = [
         ('new', 'New'),
         ('in_progress', 'In Progress'),
         ('finished', 'Finished'),
@@ -59,10 +87,10 @@ class Suggestion(models.Model):
     aliases = models.TextField(blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     birth_country = models.CharField(max_length=255, blank=True, null=True)
-    gender = models.CharField(max_length=50, blank=True, null=True)
+    gender = models.CharField(max_length=50, choices=GENDER_CHOICES, blank=True, null=True)
     
     # Crime Details
-    proven_victims = models.CharField(max_length=50, blank=True, null=True)
+    proven_victims = models.PositiveIntegerField(blank=True, null=True)
     possible_victims = models.CharField(max_length=50, blank=True, null=True)
     years_active = models.CharField(max_length=100, blank=True, null=True)
     active_countries = models.TextField(blank=True, null=True)
@@ -73,13 +101,13 @@ class Suggestion(models.Model):
     sentence = models.TextField(blank=True, null=True)
     death_date = models.DateField(blank=True, null=True)
     manner_of_death = models.CharField(max_length=255, blank=True, null=True)
-    status = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=100, choices=KILLER_STATUS_CHOICES, blank=True, null=True)
     
     # Additional Information
     notes = models.TextField(blank=True, null=True)
     
     # Submission tracking
-    submission_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new', db_index=True)
+    submission_status = models.CharField(max_length=20, choices=SUBMISSION_STATUS_CHOICES, default='new', db_index=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     
