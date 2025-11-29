@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin.models import LogEntry
 from django import forms
 from .models import SerialKiller, Suggestion, Modification
 
@@ -168,3 +169,23 @@ class ModificationAdmin(admin.ModelAdmin):
                 }),
             )
         return fieldsets
+
+
+@admin.register(LogEntry)
+class LogEntryAdmin(admin.ModelAdmin):
+    """Admin interface for viewing system logs."""
+    
+    list_display = ('action_time', 'user', 'content_type', 'object_repr', 'action_flag', 'change_message')
+    list_filter = ('user', 'action_flag', 'content_type', 'action_time')
+    search_fields = ('object_repr', 'change_message')
+    date_hierarchy = 'action_time'
+    ordering = ('-action_time',)
+    
+    def has_add_permission(self, request):
+        return False
+        
+    def has_change_permission(self, request, obj=None):
+        return False
+        
+    def has_delete_permission(self, request, obj=None):
+        return False
