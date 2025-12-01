@@ -405,6 +405,9 @@
         </form>
         {% else %}
         <h2>Submit New Evidence</h2>
+        <p style="color: #aaa; text-align: center; margin-bottom: 2rem; font-style: italic; font-family: var(--font-heading);">
+            Note: You don't have to fill all details. The only required field is the Common Name.
+        </p>
         <form method="POST" action="/api/suggest/">
             {% csrf_token %}
             <input type="hidden" name="form_type" value="new_killer">
