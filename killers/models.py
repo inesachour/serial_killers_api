@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class SerialKiller(models.Model):
@@ -42,6 +43,9 @@ class SerialKiller(models.Model):
     
     # Additional Information
     notes = models.TextField(blank=True, null=True)
+    
+    # Assignment
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_killers', help_text="Admin assigned to manage this record")
     
     # Timestamps (if they exist in Supabase)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -108,6 +112,7 @@ class Suggestion(models.Model):
     
     # Submission tracking
     submission_status = models.CharField(max_length=20, choices=SUBMISSION_STATUS_CHOICES, default='new', db_index=True)
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_suggestions', help_text="Admin assigned to review this suggestion")
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     
@@ -140,6 +145,7 @@ class Modification(models.Model):
     )
     suggestion_text = models.TextField(help_text="Correction or modification details")
     submission_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new', db_index=True)
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_modifications', help_text="Admin assigned to review this modification")
     
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
